@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Frontend\PageController;
-
+use App\Http\Controllers\Frontend\RentalController;
+use App\Http\Controllers\Frontend\CarController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -46,5 +47,19 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 
 
 Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/car/{id}', [PageController::class, 'show'])->name('car.show');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/rentals/{car_id}/book', [RentalController::class, 'create'])->name('rentals.create');
+    Route::post('/rentals/{car_id}/store', [RentalController::class, 'store'])->name('rentals.store');
+    Route::get('/my-rentals', [RentalController::class, 'history'])->name('rentals.history');
+    Route::delete('/rentals/{id}/cancel', [RentalController::class, 'cancel'])->name('rentals.cancel');
+});
+
+
+
+Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
+Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');

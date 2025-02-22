@@ -110,30 +110,59 @@
     </section>
     <!--/.page-header-->
 
-    <section class="service-section bg-grey bd-bottom padding">
+    <section class="car-details-section bg-grey padding">
         <div class="container">
             <div class="row">
-                @foreach ($cars as $car)
-                    <div class="col-lg-4 col-sm-6 padding-15">
-                        <div class="service-item">
-                            <div class="service-thumb">
-                                <img src="{{ asset($car->image ?? 'user/assets/img/service-default.jpg') }}" alt="{{ $car->name }}">
-                                <div class="service-shape-wrap">
-                                    <div class="service-shape"></div>
-                                </div>
-                                <div class="service-car">
-                                    <img src="{{ asset('user/assets/img/car-1.png') }}" alt="car">
-                                </div>
-                            </div>
-                            <div class="service-content">
-                                <h3><a href="{{ route('car.show', $car->id) }}">{{ $car->brand }} {{ $car->model }}</a></h3>
-                                <p>Type: {{ $car->car_type }} | Year: {{ $car->year }}</p>
-                                <p>Rent: ${{ number_format($car->daily_rent_price, 2) }}/day</p>
-                                <a class="read-more" href="{{ route('car.show', $car->id) }}">Book Now</a>
-                            </div>
-                        </div>
+                <!-- Left Column: Car Image -->
+                <div class="col-md-8">
+                    <div class="car-image shadow d-flex justify-content-center align-items-center">
+                        <img src="{{ asset($car->image ?? 'https://placehold.co/800x500?text=Car+Image') }}"
+                             alt="{{ $car->name }}"
+                             height="450"
+                             class="rounded shadow">
                     </div>
-                @endforeach
+                </div>
+
+                <!-- Right Column: Car Details -->
+                <div class="col-md-4">
+                    <div class="car-info">
+                        <h2>{{ $car->brand }} {{ $car->model }}</h2>
+                        <p><strong>Type:</strong> {{ $car->car_type }}</p>
+                        <p><strong>Year:</strong> {{ $car->year }}</p>
+                        <h3 class="bg-warning"><strong>Daily Rent:</strong> ${{ number_format($car->daily_rent_price, 2) }}</h3>
+                        <p><strong>Status:</strong>
+                            @if ($car->availability)
+                                <span class="badge bg-success">Available</span>
+                            @else
+                                <span class="badge bg-danger">Not Available</span>
+                            @endif
+                        </p>
+
+                        <!-- Date Inputs for Booking -->
+                        @if ($car->availability)
+                            {{--<form action="{{ route('rentals.store') }}" method="POST">--}}
+                                @csrf
+                                <input type="hidden" name="car_id" value="{{ $car->id }}">
+
+                                <div class="mb-3">
+                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <input type="date" name="start_date" id="start_date" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="date" name="end_date" id="end_date" class="form-control" required>
+                                </div>
+
+                                <button type="button" class="btn" style="background-color: #037015; color: white; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='black'" onmouseout="this.style.backgroundColor='#037015'">
+                                    Green Button
+                                </button>
+                            </form>
+                        @else
+                            <button class="btn btn-secondary" disabled>Not Available</button>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
     </section>
