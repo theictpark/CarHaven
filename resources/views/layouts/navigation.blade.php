@@ -5,9 +5,11 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-1 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                    </a>
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ url('admin/dashboard') }}"><x-application-logo class="block h-1 w-auto fill-current text-gray-800 dark:text-gray-200" /></a>
+                    @else
+                        <a href="{{ url('customer/dashboard') }}"><x-application-logo class="block h-1 w-auto fill-current text-gray-800 dark:text-gray-200" /></a>
+                    @endif
                 </div>
 
                 <!-- Navigation Links -->

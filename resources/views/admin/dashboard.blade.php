@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Car Haven - Admin Dashboard</title>
-
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('user') }}/assets/img/favicon.svg">
     <!-- CSS Files  -->
     <link rel="stylesheet" href="{{ asset('admin') }}/assets/fonts/bootstrap/bootstrap-icons.css" />
     <link rel="stylesheet" href="{{ asset('admin') }}/assets/css/main.min.css" />

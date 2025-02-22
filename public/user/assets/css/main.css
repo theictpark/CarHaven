@@ -1877,11 +1877,11 @@
 }
 
 .contact-section .contact-details li i {
-    background-color: #222;
+    background-color: #037015;
     background-image: url(../img/texture.png);
     background-repeat: repeat;
     background-size: cover;
-    color: #037015;
+    color: #fff;
     font-size: 15px;
     margin-right: 15px;
     width: 50px;
