@@ -73,7 +73,11 @@
                         @if (Route::has('login'))
                             <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
                                 @auth
-                                    <a href="{{ url('/dashboard') }}" class="menu-btn">Dashboard</a>
+                                    @if(auth()->user()->role === 'admin')
+                                        <a href="{{ url('admin/dashboard') }}" class="menu-btn">Dashboard</a>
+                                    @else
+                                        <a href="{{ url('customer/dashboard') }}" class="menu-btn">Dashboard</a>
+                                    @endif
                                 @else
                                     <a href="{{ route('login') }}" class="menu-btn">Log in</a>
 
@@ -106,57 +110,77 @@
     </section>
     <!--/.page-header-->
 
-    <section class="contact-section bd-bottom padding">
-        <div class="map"></div>
+    <section class="service-section bg-grey bd-bottom padding">
         <div class="container">
+            <!-- 🚗 Filter Form -->
+            <form action="{{ route('cars.index') }}" method="GET" class="mb-5">
+                <div class="row">
+                    <div class="col-md-4">
+
+                        <select name="brand" id="brand" class="form-select">
+                            <option selected>All Brands</option>
+                            @foreach ($brands as $brand)
+                                <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <select name="car_type" id="car_type" class="form-select">
+                            <option selected>All Types</option>
+                            @foreach ($carTypes as $type)
+                                <option value="{{ $type }}" {{ request('car_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <input type="text" name="max_price" id="max_price" class="form-control" placeholder="Enter Max Price" value="{{ request('max_price') }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit" class="btn "
+                                    style="background-color: #037015; padding: 5px 75px 5px 75px; color: white; transition: background-color 0.3s ease;"
+                                    onmouseover="this.style.backgroundColor='black'"
+                                    onmouseout="this.style.backgroundColor='#037015'">
+                                    Filter
+                                </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- 🚘 Car Listing Section -->
             <div class="row">
-                <div class="col-md-6">
-                    <div class="contact-details-wrap">
-                        <div class="contact-title">
-                            <h2>Have Any <span>Questions?</span></h2>
-                            <p>Get in touch to discuss your employee wellbeing needs today. Please give us a call, drop us an email or fill out the contact form.</p>
+                @forelse ($cars as $car)
+                    <div class="col-lg-4 col-sm-6 padding-15">
+                        <div class="service-item">
+                            <div class="service-thumb">
+                                <img src="{{ asset($car->image ?? 'user/assets/img/service-default.jpg') }}" alt="{{ $car->name }}">
+                                <div class="service-shape-wrap">
+                                    <div class="service-shape"></div>
+                                </div>
+                                <div class="service-car">
+                                    <img src="{{ asset('user/assets/img/car-1.png') }}" alt="car">
+                                </div>
+                            </div>
+                            <div class="service-content">
+                                <h3><a href="{{ route('car.show', $car->id) }}">{{ $car->brand }} {{ $car->model }}</a></h3>
+                                <p>Type: {{ $car->car_type }} | Year: {{ $car->year }}</p>
+                                <p>Rent: ${{ number_format($car->daily_rent_price, 2) }}/day</p>
+                                <a class="read-more" href="{{ route('car.show', $car->id) }}">Book Now</a>
+                            </div>
                         </div>
-                        <ul class="contact-details">
-                            <li><i class="fas fa-map-marker-alt"></i>962 Fifth Avenue,<br> New York, NY10022</li>
-                            <li><i class="fas fa-envelope"></i>info@carhaven</li>
-                            <li><i class="fas fa-phone"></i>(+880) 191148419 <br>+880-1911-418-419</li>
-                        </ul>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="contact-form">
-                        <form action="contact.php" method="post" id="ajax_contact" class="form-horizontal">
-                            <div class="contact-title">
-                                <h2>Contact With Us! <span></span></h2>
-                            </div>
-                            <div class="contact-form-group">
-                                <div class="form-field">
-                                    <input type="text" id="firstname" name="firstname" class="form-control" placeholder="First Name" required="">
-                                </div>
-                                <div class="form-field">
-                                    <input type="text" id="lastname" name="lastname" class="form-control" placeholder="Last Name" required="">
-                                </div>
-                                <div class="form-field">
-                                    <input type="email" id="email" name="email" class="form-control" placeholder="Email" required="">
-                                </div>
-                                <div class="form-field">
-                                    <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone Number" required="">
-                                </div>
-                                <div class="form-field message">
-                                    <textarea id="message" name="message" cols="30" rows="4" class="form-control" placeholder="Message" required=""></textarea>
-                                </div>
-                                <div class="form-field">
-                                    <button id="submit" class="default-btn" type="submit">Send Massage</button>
-                                </div>
-                            </div>
-                            <div id="form-messages" class="alert" role="alert"></div>
-                        </form>
+                @empty
+                    <div class="col-12 text-center">
+                        <p>No cars available for the selected filters.</p>
                     </div>
-                </div>
+                @endforelse
             </div>
         </div>
     </section>
-    <!--/.contact-section-->
+    <!--/.service-section-->
 
 
     <footer class="footer-section">

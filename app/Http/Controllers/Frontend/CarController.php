@@ -12,21 +12,27 @@ class CarController extends Controller
     {
         $query = Car::where('availability', true);
 
-        if ($request->has('brand')) {
+        // Apply filters
+        if ($request->has('brand') && $request->brand) {
             $query->where('brand', $request->brand);
         }
 
-        if ($request->has('car_type')) {
+        if ($request->has('car_type') && $request->car_type) {
             $query->where('car_type', $request->car_type);
         }
 
-        if ($request->has('max_price')) {
+        if ($request->has('max_price') && is_numeric($request->max_price)) {
             $query->where('daily_rent_price', '<=', $request->max_price);
         }
 
+        // Get filtered cars
         $cars = $query->get();
 
-        return view('frontend.cars.index', compact('cars'));
+        // Get unique brands and car types for filters
+        $brands = Car::pluck('brand')->unique();
+        $carTypes = Car::pluck('car_type')->unique();
+
+        return view('frontend.rentals',  compact('cars', 'brands', 'carTypes'));
     }
 
     public function show($id)
