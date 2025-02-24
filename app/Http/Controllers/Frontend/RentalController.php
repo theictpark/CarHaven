@@ -17,37 +17,50 @@ class RentalController extends Controller
     }
 
     // Store a new rental booking
-    public function store(Request $request, $car_id)
+    public function store(Request $request)
     {
+        //dd($request->all());
+        // Validation rules
         $request->validate([
+            'car_id' => 'required|exists:cars,id',
             'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        $car = Car::findOrFail($car_id);
+        $car = Car::findOrFail($request->car_id);
 
-        // Check if the car is available
-        if (!$car->availability) {
-            return redirect()->back()->with('error', 'This car is not available.');
+        // Check for overlapping bookings
+        $existingRental = Rental::where('car_id', $car->id)
+            ->where('status', 'Ongoing')
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                      ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                      ->orWhere(function ($q) use ($request) {
+                          $q->where('start_date', '<=', $request->start_date)
+                            ->where('end_date', '>=', $request->end_date);
+                      });
+            })
+            ->exists();
+
+        if ($existingRental) {
+            return back()->with('error', 'This car is already booked for the selected dates.');
         }
 
         // Calculate total cost
-        $days = \Carbon\Carbon::parse($request->start_date)->diffInDays($request->end_date);
+        $days = now()->parse($request->end_date)->diffInDays(now()->parse($request->start_date)) + 1;
         $totalCost = $days * $car->daily_rent_price;
 
-        // Create rental
+        // Create the rental entry
         Rental::create([
             'user_id' => Auth::id(),
             'car_id' => $car->id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'total_cost' => $totalCost,
+            'status' => 'Ongoing',
         ]);
 
-        // Mark car as unavailable
-        $car->update(['availability' => false]);
-
-        return redirect()->route('rentals.history')->with('success', 'Booking successful.');
+        return back()->with('success', 'Booking successful!');
     }
 
     // Show user rental history

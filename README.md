@@ -1,4 +1,4 @@
-# CarHaven Car **"Rental"** Web Application 
+# CarHaven **"Car Rental"** Web Application 
 
 ## Overview
 This CarHaven Web Application is built using Laravel and allows users to browse available cars, select a car, and book it for a specified rental period. The system ensures that cars are available for the chosen dates before confirming the booking. It includes role-based access control, where administrators can manage cars and rentals, while customers can view their bookings.

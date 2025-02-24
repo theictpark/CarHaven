@@ -30,6 +30,24 @@
     <link rel="stylesheet" href="{{ asset('user') }}/assets/css/main.css">
     <link rel="stylesheet" href="{{ asset('user') }}/assets/css/responsive.css">
 </head>
+<style>
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+</style>
 
 <body>
     <!--[if lt IE 8]>
@@ -110,8 +128,32 @@
     </section>
     <!--/.page-header-->
 
+
     <section class="car-details-section bg-grey padding">
         <div class="container">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
             <div class="row">
                 <!-- Left Column: Car Image -->
                 <div class="col-md-8">
@@ -140,22 +182,25 @@
 
                         <!-- Date Inputs for Booking -->
                         @if ($car->availability)
-                            {{--<form action="{{ route('rentals.store') }}" method="POST">--}}
+                            <form method="POST" action="{{ route('rentals.store') }}">
                                 @csrf
                                 <input type="hidden" name="car_id" value="{{ $car->id }}">
 
                                 <div class="mb-3">
                                     <label for="start_date" class="form-label">Start Date</label>
-                                    <input type="date" name="start_date" id="start_date" class="form-control" required>
+                                    <input type="date" name="start_date" id="start_date" class="form-control" >
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="end_date" class="form-label">End Date</label>
-                                    <input type="date" name="end_date" id="end_date" class="form-control" required>
+                                    <input type="date" name="end_date" id="end_date" class="form-control" >
                                 </div>
 
-                                <button type="button" class="btn" style="background-color: #037015; color: white; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='black'" onmouseout="this.style.backgroundColor='#037015'">
-                                    Green Button
+                                <button type="submit" class="btn"
+                                    style="background-color: #037015; color: white; transition: background-color 0.3s ease;"
+                                    onmouseover="this.style.backgroundColor='black'"
+                                    onmouseout="this.style.backgroundColor='#037015'">
+                                    Booking Now
                                 </button>
                             </form>
                         @else

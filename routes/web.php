@@ -54,7 +54,8 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 
 Route::middleware('auth')->group(function () {
     Route::get('/rentals/{car_id}/book', [RentalController::class, 'create'])->name('rentals.create');
-    Route::post('/rentals/{car_id}/store', [RentalController::class, 'store'])->name('rentals.store');
+
+    //Route::post('/rentals/{car_id}/store', [RentalController::class, 'store'])->name('rentals.store');
     Route::get('/my-rentals', [RentalController::class, 'history'])->name('rentals.history');
     Route::delete('/rentals/{id}/cancel', [RentalController::class, 'cancel'])->name('rentals.cancel');
 });
@@ -63,3 +64,6 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
+
+
+Route::post('/rentals/store', [RentalController::class, 'store'])->name('rentals.store');
